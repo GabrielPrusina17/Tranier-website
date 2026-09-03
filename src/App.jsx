@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import SplashScreen from "./components/layout/SplashScreen";
-
+import LandingHeroSection from "./sections/LandingHeroSection";
 
 function App () {
   
@@ -19,7 +19,7 @@ function App () {
           <SplashScreen key="splash" />
         ) : (
           <div key="app">
-
+            <LandingHeroSection />
           </div>
         )}
       </AnimatePresence>
