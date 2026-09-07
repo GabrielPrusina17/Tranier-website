@@ -5,6 +5,7 @@ import LandingHeroSection from "./sections/LandingHeroSection";
 import Hero3D from "./sections/Hero3D";
 import GallerySection from "./sections/GallerySection";
 import TransformationSection from "./sections/TransformationSection";
+import ReviewsStackSection from "./sections/ReviewSection";
 
 function App () {
   
@@ -29,6 +30,23 @@ const testTransforms = [
   { id:3, before:"https://picsum.photos/id/1084/600/800", after:"https://picsum.photos/id/1080/600/800", name:"Luka", period:"6mj", result:"+8 kg" },
 ];
 
+const testReviews = [
+  { id:1, text:"Walked out with a completely different relationship to my body.", name:"Marko Perić", role:"8 months", rating:5 },
+  { id:2, text:"Every session had a purpose. No wasted time.", name:"Ivana Kovač", role:"1 year", rating:5 },
+  { id:3, text:"I eat more and weigh less. Still can't believe it.", name:"Luka Marić", role:"6 months", rating:5 },
+  { id:4, text:"My back pain is gone for the first time in years.", name:"Sanja Tomić", role:"5 months", rating:4 },
+  { id:5, text:"Finally understand training as a skill.", name:"Ena Babić", role:"4 months", rating:5 },
+  { id:6, text:"Gained real muscle. The plan just works.", name:"Dario Vuk", role:"7 months", rating:5 },
+   { id:1, text:"Walked out with a completely different relationship to my body.", name:"Marko Perić", role:"8 months", rating:5 },
+  { id:2, text:"Every session had a purpose. No wasted time.", name:"Ivana Kovač", role:"1 year", rating:5 },
+  { id:3, text:"I eat more and weigh less. Still can't believe it.", name:"Luka Marić", role:"6 months", rating:5 },
+  { id:4, text:"My back pain is gone for the first time in years.", name:"Sanja Tomić", role:"5 months", rating:4 },
+  { id:5, text:"Finally understand training as a skill.", name:"Ena Babić", role:"4 months", rating:5 },
+  { id:6, text:"Gained real muscle. The plan just works.", name:"Dario Vuk", role:"7 months", rating:5 },
+  
+
+];
+
   return (
     <>
       <AnimatePresence mode="wait">
@@ -40,6 +58,11 @@ const testTransforms = [
             <Hero3D />
             <GallerySection slides={testSlides} isAdmin={true} />
             <TransformationSection items={testTransforms} isAdmin={true} />
+            <ReviewsStackSection
+              reviews={testReviews}
+              isAdmin={true}
+              onLeaveReview={() => alert("Login required — forma kasnije")}
+            />
           </div>
         )}
       </AnimatePresence>
