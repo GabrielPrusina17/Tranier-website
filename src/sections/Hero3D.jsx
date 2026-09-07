@@ -9,7 +9,7 @@ export default function Hero3D({ isAdmin = false }) {
   const [activeZone, setActiveZone] = useState(null);
 
   return (
-    <section className="relative w-full h-[100svh] bg-[#0a0a0a] overflow-hidden">
+    <section id="hero-3d" className="relative w-full h-[100svh] bg-[#0a0a0a] overflow-hidden">
       {/* Pozadina teretane (blur za fokus na model) */}
       <GymBackground focused={true} />
 

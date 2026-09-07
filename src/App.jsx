@@ -4,6 +4,7 @@ import SplashScreen from "./components/layout/SplashScreen";
 import LandingHeroSection from "./sections/LandingHeroSection";
 import Hero3D from "./sections/Hero3D";
 import GallerySection from "./sections/GallerySection";
+import TransformationSection from "./sections/TransformationSection";
 
 function App () {
   
@@ -22,6 +23,11 @@ function App () {
   { id: 5, src: "https://picsum.photos/id/1033/1400/900", quote: "One more rep is where growth lives.", tag: "Grind" },
 ];
 
+const testTransforms = [
+  { id:1, before:"https://picsum.photos/id/1062/600/800", after:"https://picsum.photos/id/1074/600/800", name:"Marko", period:"8mj", result:"-14 kg" },
+  { id:2, before:"https://picsum.photos/id/1025/600/800", after:"https://picsum.photos/id/1039/600/800", name:"Ivana", period:"1god", result:"-18 kg" },
+  { id:3, before:"https://picsum.photos/id/1084/600/800", after:"https://picsum.photos/id/1080/600/800", name:"Luka", period:"6mj", result:"+8 kg" },
+];
 
   return (
     <>
@@ -33,6 +39,7 @@ function App () {
             <LandingHeroSection />
             <Hero3D />
             <GallerySection slides={testSlides} isAdmin={true} />
+            <TransformationSection items={testTransforms} isAdmin={true} />
           </div>
         )}
       </AnimatePresence>

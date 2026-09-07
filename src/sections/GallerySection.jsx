@@ -26,15 +26,22 @@ export default function GallerySection({
     const el = stageRef.current;
     if (!el) return;
     const onWheel = (e) => {
-      e.preventDefault();
-      if (lock.current) return;
-      lock.current = true;
-      go(safeCur + (e.deltaY > 0 ? 1 : -1));
-      setTimeout(() => (lock.current = false), 700);
+        const dir = e.deltaY > 0 ? 1 : -1;
+        const atStart = safeCur === 0 && dir === -1;
+        const atEnd = safeCur === count - 1 && dir === 1;
+        if(atStart || atEnd) {
+            return;
+        }
+
+        e.preventDefault();
+        if (lock.current) return;
+        lock.current = true;
+        setCur((p) => Math.min(Math.max(p + dir, 0), count - 1)); 
+        setTimeout(() => (lock.current = false), 700);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [safeCur, go]);
+  }, [safeCur, count]);
 
   if (!count) {
     return (
