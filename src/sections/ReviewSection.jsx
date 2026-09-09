@@ -50,7 +50,7 @@ export default function ReviewsStackSection({
   const hasReviews = reviews.length > 0;
 
   return (
-    <section className="relative w-full bg-[#14140f] py-20 md:py-28 px-[6vw]">
+    <section id="reviews" className="relative w-full bg-[#14140f] py-20 md:py-28 px-[6vw]">
       <div className="max-w-[1200px] mx-auto">
         {/* Naslov + dugme */}
         <div className="flex items-center gap-3.5 mb-4">

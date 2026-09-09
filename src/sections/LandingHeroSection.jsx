@@ -15,6 +15,7 @@ function LandingHeroSection () {
 
     return (
         <section
+            id="home"
             className="relative w-full h-screen overflow-hidden bg-black"
         >
             <img 

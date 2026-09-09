@@ -22,7 +22,7 @@ function TransformationSection ({
     };
 
     return (
-    <section ref={ref} className="relative w-full bg-[#14140f] py-20 md:py-28 px-[6vw]">
+    <section id="transformations" ref={ref} className="relative w-full bg-[#14140f] py-20 md:py-28 px-[6vw]">
       <div className="max-w-[1200px] mx-auto">
         <div className="flex items-center gap-3.5 mb-4">
           <span className="w-10 h-px bg-[#7a8248]" />

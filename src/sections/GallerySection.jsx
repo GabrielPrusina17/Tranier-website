@@ -45,7 +45,7 @@ export default function GallerySection({
 
   if (!count) {
     return (
-      <section className="relative w-full h-[70vh] bg-[#0a0a0a] flex items-center justify-center">
+      <section id="gallery" className="relative w-full h-[70vh] bg-[#0a0a0a] flex items-center justify-center">
         {isAdmin ? (
           <button
             onClick={onAddClick}

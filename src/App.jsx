@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import SplashScreen from "./components/layout/SplashScreen";
 import LandingHeroSection from "./sections/LandingHeroSection";
@@ -6,14 +6,24 @@ import Hero3D from "./sections/Hero3D";
 import GallerySection from "./sections/GallerySection";
 import TransformationSection from "./sections/TransformationSection";
 import ReviewsStackSection from "./sections/ReviewSection";
+import Navbar from "./components/layout/Navbar";
+import useActiveSection from "./hooks/useActiveSection";
+
+const SECTION_IDS = ["home", "hero-3d", "gallery", "transformations", "reviews", "contact"];
 
 function App () {
   
   const [isLoading, setIsLoading] = useState(true);
+  const {activeSection, scrolled} = useActiveSection(SECTION_IDS)
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2500)
     return () => clearTimeout(timer);
+  },[]);
+
+  const handleNavigate = useCallback((id) => {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({ behavior: "smooth" });
   },[]);
 
   const testSlides = [
@@ -54,6 +64,11 @@ const testReviews = [
           <SplashScreen key="splash" />
         ) : (
           <div key="app">
+            <Navbar 
+              activeSection={activeSection}
+              scrolled={scrolled}
+              onNavigate={handleNavigate}
+            />
             <LandingHeroSection />
             <Hero3D />
             <GallerySection slides={testSlides} isAdmin={true} />
