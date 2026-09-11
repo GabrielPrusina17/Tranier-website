@@ -10,6 +10,7 @@ const navLinks = [
   { label: "Gallery", id: "gallery" },
   { label: "Transformations", id: "transformations" },
   { label: "Reviews", id: "reviews" },
+  {label: "FAQ", id: "faq"}
 ];
 
 export default function Navbar({ activeSection, scrolled, onNavigate}) {

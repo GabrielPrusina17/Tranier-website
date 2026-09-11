@@ -8,8 +8,9 @@ import TransformationSection from "../sections/TransformationSection";
 import ReviewsStackSection from "../sections/ReviewSection";
 import Navbar from "../components/layout/Navbar";
 import useActiveSection from "../hooks/useActiveSection";
+import FaqSection from "../sections/FaqSection";
 
-const SECTION_IDS = ["home", "hero-3d", "gallery", "transformations", "reviews", ];
+const SECTION_IDS = ["home", "hero-3d", "gallery", "transformations", "reviews", "faq" ];
 
 function HomePage () {
   
@@ -78,6 +79,7 @@ const testReviews = [
               isAdmin={true}
               onLeaveReview={() => alert("Login required — forma kasnije")}
             />
+            <FaqSection />
           </div>
         )}
       </AnimatePresence>
