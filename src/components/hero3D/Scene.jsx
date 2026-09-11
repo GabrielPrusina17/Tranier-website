@@ -1,39 +1,42 @@
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Suspense, useEffect } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
+import * as THREE from "three";
 
-const CAMERA_Z = 5.5;
-const CAMERA_Y = 0.4;
-const CAMERA_FOV = 42;
+// Svjetlo pričvršćeno na kameru: koju god stranu modela okreneš,
+// mišić ostaje čitljiv (inače su leđa u mraku).
+function Headlight({ color = "#fff3e2", intensity = 1.25 }) {
+  const { camera, scene } = useThree();
+  useEffect(() => {
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(0.4, 0.6, 1);
+    light.target = camera;
+    camera.add(light);
+    scene.add(camera);
+    return () => { camera.remove(light); light.dispose(); };
+  }, [camera, scene, color, intensity]);
+  return null;
+}
 
-export default function Scene({ children, controlsEnabled = true }) {
+export default function Scene({ children }) {
   return (
     <Canvas
-      camera={{ position: [0, CAMERA_Y, CAMERA_Z], fov: CAMERA_FOV }}
+      camera={{ position: [0, 0, 3.5], fov: 38, near: 0.1, far: 100 }}
       dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true }}
-      style={{ width: "100%", height: "100%" }}
-      onCreated={({ camera, size }) => {
-        const aspect = size.width / size.height;
-        if (aspect < 1) camera.position.z = CAMERA_Z * 1.6;
-        else if (aspect < 1.5) camera.position.z = CAMERA_Z * 1.2;
-        camera.updateProjectionMatrix();
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      onCreated={({ gl }) => {
+        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        gl.toneMappingExposure = 1.15;
       }}
+      style={{ width: "100%", height: "100%" }}
     >
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[3, 5, 2]} intensity={2.2} />
-      <directionalLight position={[-3, 2, -2]} intensity={0.8} />
+      {/* Svjetla daju modelu volumen — bez njih je Meshy model plosnat kao 2D slika */}
+      <hemisphereLight args={["#5a5f6b", "#0a0a0a", 0.55]} />
+      <directionalLight position={[2.5, 3.4, 2.6]} intensity={2.4} color="#ffd9a0" />
+      <directionalLight position={[-3, 2, -2.4]} intensity={1.0} color="#7fb4ff" />
+      <directionalLight position={[0, 1.2, 3.5]} intensity={0.35} />
+      <Headlight />
 
-      {children}
-
-      <OrbitControls
-        enabled={controlsEnabled}
-        enablePan={false}
-        enableZoom={false}
-        minPolarAngle={Math.PI / 2}
-        maxPolarAngle={Math.PI / 2}
-        enableDamping
-        dampingFactor={0.08}
-      />
+      <Suspense fallback={null}>{children}</Suspense>
     </Canvas>
   );
 }
