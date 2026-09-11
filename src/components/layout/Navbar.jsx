@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
+import { Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import appLogo from "../../assets/appLogo.png"
 
@@ -9,10 +10,9 @@ const navLinks = [
   { label: "Gallery", id: "gallery" },
   { label: "Transformations", id: "transformations" },
   { label: "Reviews", id: "reviews" },
-  { label: "Contact", id: "contact" },
 ];
 
-export default function Navbar({ activeSection, scrolled, onNavigate, onLogin = () => {} }) {
+export default function Navbar({ activeSection, scrolled, onNavigate}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
 
@@ -66,12 +66,12 @@ export default function Navbar({ activeSection, scrolled, onNavigate, onLogin = 
           ))}
 
           {/* Prijava dugme */}
-          <button
-            onClick={onLogin}
-            className="ml-2 px-5 py-2 rounded-full bg-[#7a8248] hover:bg-[#8a9358] text-[#14140f] text-sm font-medium transition-colors cursor-pointer"
+          <Link
+            to="/login"
+            className="ml-2 px-5 py-2 rounded-full bg-[#7a8248] cursor-pointer hover:bg-[#8a9358] text-[#14140f] text-sm font-medium transition-colors cursor-pointer"
           >
             Prijava
-          </button>
+          </Link>
         </div>
 
         {/* Mobile toggle */}
@@ -117,12 +117,13 @@ export default function Navbar({ activeSection, scrolled, onNavigate, onLogin = 
               ))}
 
               
-              <button
-                onClick={() => { setMenuOpen(false); onLogin(); }}
+              <Link
+                to="/login"
+                onClick={() => { setMenuOpen(false)}}
                 className="mt-3 px-5 py-3 rounded-full bg-[#7a8248] hover:bg-[#8a9358] text-[#14140f] text-sm font-medium transition-colors cursor-pointer text-center"
               >
                 Prijava
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}

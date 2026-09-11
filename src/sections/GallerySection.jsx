@@ -26,6 +26,10 @@ export default function GallerySection({
     const el = stageRef.current;
     if (!el) return;
     const onWheel = (e) => {
+        const rect = el.getBoundingClientRect();
+        const fullyVisible = rect.top <= 5 && rect.bottom >= window.innerHeight - 5;
+        if(!fullyVisible) return;
+
         const dir = e.deltaY > 0 ? 1 : -1;
         const atStart = safeCur === 0 && dir === -1;
         const atEnd = safeCur === count - 1 && dir === 1;
@@ -45,7 +49,7 @@ export default function GallerySection({
 
   if (!count) {
     return (
-      <section id="gallery" className="relative w-full h-[70vh] bg-[#0a0a0a] flex items-center justify-center">
+      <section className="relative w-full h-[70h] bg-[#0a0a0a] flex items-center justify-center">
         {isAdmin ? (
           <button
             onClick={onAddClick}
@@ -69,6 +73,7 @@ export default function GallerySection({
 
   return (
     <section
+      id="gallery"
       ref={stageRef}
       className="relative w-full h-[100svh] overflow-hidden bg-[#0a0a0a] select-none"
     >
