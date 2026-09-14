@@ -14,9 +14,9 @@ const FLOOR_Y = -0.9;         // gdje stoje stopala
 
 /**
  * Stvarni gabariti modela u svijetu.
- * Box3.setFromObject() na ovom GLB-u laže: mesh čvor ima skalu 0.01, a stvarnu
- * veličinu nose kosti. Zato mjerimo skinnane vertexe — isti put kojim se računa
- * i zoom na zonu, pa se kadar i highlight ne mogu razići.
+ * Box3.setFromObject() zna lagati (mesh čvor sa skalom 0.01, a veličinu nose
+ * kosti), pa mjerimo vertexe — isti put kojim se računa i zoom na zonu, da se
+ * kadar i highlight ne mogu razići.
  */
 function measureModel(mesh, step = 8) {
   const box = new THREE.Box3();
@@ -64,10 +64,8 @@ export default function TrainerModel({ activeZone, onSelect, onFocus, onReady })
   useEffect(() => {
     if (!mesh || !group.current) return;
 
-    // Bind poza = T-poza ovog modela; nijedna GLB animacija se ne pokreće.
-    // POZOR: kosti ovog modela nose faktor x100 koji postoji SAMO dok ih vozi
-    // animacijska klipa. U bind pozi ga nema, pa model postane ~100x manji —
-    // zato se veličina MORA izmjeriti nakon poziranja, a ne pretpostaviti.
+    // Ako model IMA kosti, vrati ih u bind (T) pozu; trainer1.glb ih nema
+    // pa se ovo preskoči. Nijedna GLB animacija se ne pokreće — model stoji.
     if (mesh.skeleton) { mesh.skeleton.pose(); mesh.skeleton.update(); }
     scene.traverse((o) => { if (o.isMesh || o.isSkinnedMesh) o.frustumCulled = false; });
 
@@ -124,13 +122,13 @@ export default function TrainerModel({ activeZone, onSelect, onFocus, onReady })
   }, [mesh, gl]);
 
   // ---- klik: bez raycasta na svaki pomak miša ----
-  // R3F raycasta scenu na SVAKI pointermove, a raycast po SkinnedMesh-u računa
-  // transformaciju kostiju za svih 54k trokuta -> lag pri rotaciji. Zato modelu
-  // gasimo raycast, a sami ga pozovemo točno jednom, na klik.
+  // R3F raycasta scenu na SVAKI pointermove, a raycast po gustom meshu je skup
+  // -> lag pri rotaciji. Zato modelu gasimo raycast, a sami ga pozovemo točno
+  // jednom, na klik.
   useEffect(() => {
     if (!mesh || !data) return;
 
-    const skinnedRaycast = mesh.raycast.bind(mesh);
+    const meshRaycast = mesh.raycast.bind(mesh);
     mesh.raycast = () => {};
 
     const el = gl.domElement;
@@ -154,7 +152,7 @@ export default function TrainerModel({ activeZone, onSelect, onFocus, onReady })
       raycaster.setFromCamera(ndc, camera);
 
       const hits = [];
-      skinnedRaycast(raycaster, hits);
+      meshRaycast(raycaster, hits);
       hits.sort((a, b) => a.distance - b.distance);
       const hit = hits[0];
 
@@ -187,7 +185,7 @@ export default function TrainerModel({ activeZone, onSelect, onFocus, onReady })
     return () => {
       el.removeEventListener("pointerdown", onDown);
       el.removeEventListener("pointerup", onUp);
-      mesh.raycast = skinnedRaycast;
+      mesh.raycast = meshRaycast;
     };
   }, [mesh, data, gl, camera]);
 
