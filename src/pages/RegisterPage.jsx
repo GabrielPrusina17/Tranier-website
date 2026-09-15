@@ -144,7 +144,7 @@ function RegisterPage () {
                 </form>
                 
                 <p className="text-center text-sm text-gray-600 mt-6">
-                    Already have an account?
+                    Already have an account?{" "}
                     <Link
                         to="/login"
                         className="text-[#e8e4d6] font-medium hover:underline"

@@ -105,7 +105,7 @@ export function patchMuscleMaterial(material) {
 
         // --- sweep: highlight se "puni" kroz visinu zone ---
         float t = clamp((vRestY - uY0) / max(uY1 - uY0, 0.001), 0.0, 1.0);
-        float reveal = smoothstep(uSweep - 0.55, uSweep - 0.05, t);
+        float reveal = 1.0 - smoothstep(uSweep - 0.15, uSweep + 0.15, t);
 
         float mA = vMaskA * (1.0 - uMix);
         float mB = vMaskB * uMix * reveal;

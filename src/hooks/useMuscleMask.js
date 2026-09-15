@@ -14,7 +14,7 @@ const ellipsoid = (x, y, z, c, r, soft) => {
 
 /**
  * Za svaki vertex izračuna koliko pripada kojoj zoni (0..1) i rezultat upiše u
- * geometry atribute. Radi se JEDNOM po modelu (~30 ms za 32k vertexa).
+ * geometry atribute. Radi se JEDNOM po modelu.
  * Maska je vezana za vertex, pa prati skinning/pozu sama od sebe.
  */
 export default function useMuscleMask(mesh) {
@@ -23,10 +23,40 @@ export default function useMuscleMask(mesh) {
 
     const g = mesh.geometry;
     const N = g.attributes.position.count;
-    const pos = g.attributes.position.array;
-    const nrm = g.attributes.normal.array;
-    const skinIndex = g.attributes.skinIndex?.array ?? null;
-    const skinWeight = g.attributes.skinWeight?.array ?? null;
+
+    // Atributi mogu biti INTERLEAVED (gltf-transform to radi po defaultu) —
+    // tada `.array` nije ravan niz nego cijeli isprepleteni buffer, pa bi
+    // indeksiranje po i*3 čitalo tuđe podatke i zone bi ispale prazne.
+    // getX/getY/getZ radi u oba slučaja.
+    const posAttr = g.attributes.position;
+    const nrmAttr = g.attributes.normal;
+    const siAttr = g.attributes.skinIndex ?? null;
+    const swAttr = g.attributes.skinWeight ?? null;
+
+    const pos = new Float32Array(N * 3);
+    const nrm = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      pos[i * 3] = posAttr.getX(i);
+      pos[i * 3 + 1] = posAttr.getY(i);
+      pos[i * 3 + 2] = posAttr.getZ(i);
+      nrm[i * 3] = nrmAttr.getX(i);
+      nrm[i * 3 + 1] = nrmAttr.getY(i);
+      nrm[i * 3 + 2] = nrmAttr.getZ(i);
+    }
+
+    let skinIndex = null;
+    let skinWeight = null;
+    if (siAttr && swAttr) {
+      skinIndex = new Uint16Array(N * 4);
+      skinWeight = new Float32Array(N * 4);
+      for (let i = 0; i < N; i++) {
+        for (let k = 0; k < 4; k++) {
+          skinIndex[i * 4 + k] = siAttr.getComponent(i, k);
+          skinWeight[i * 4 + k] = swAttr.getComponent(i, k);
+        }
+      }
+    }
+
     const boneNames = mesh.skeleton ? mesh.skeleton.bones.map((b) => b.name) : [];
 
     const masks = {};
@@ -38,7 +68,7 @@ export default function useMuscleMask(mesh) {
       const boneIdx = new Set(z.bones.map((n) => boneNames.indexOf(n)).filter((i) => i >= 0));
 
       for (let i = 0; i < N; i++) {
-        // 1) težina kostiju
+        // 1) težina kostiju (preskače se ako model nije riggan)
         let bw = 1;
         if (skinIndex && boneIdx.size) {
           bw = 0;
@@ -65,7 +95,7 @@ export default function useMuscleMask(mesh) {
         if (v > idle[i]) idle[i] = v;
       }
 
-      // y-raspon (za sweep) + težište u rest pozi (za fallback klik)
+      // y-raspon (za sweep) + težište (za fallback klik)
       let y0 = Infinity, y1 = -Infinity, sx = 0, sy = 0, sz = 0, sw = 0, n = 0;
       for (let i = 0; i < N; i++) {
         const v = m[i];
@@ -94,9 +124,9 @@ export default function useMuscleMask(mesh) {
 const _v = new THREE.Vector3();
 
 /**
- * Težište i radijus zone U SVIJETU, iz trenutne poze — kamera iz toga računa
- * gdje treba stati. Za zrcaljene skupine kadrira jednu stranu, jer su u T-pozi
- * ruke preširoko razmaknute da obje stanu u smislen kadar.
+ * Težište i radijus zone U SVIJETU — kamera iz toga računa gdje treba stati.
+ * Za zrcaljene skupine kadrira jednu stranu, jer su u T-pozi ruke preširoko
+ * razmaknute da obje stanu u smislen kadar.
  */
 export function zoneFocus(mesh, data, zone, oneSide = true) {
   if (!mesh || !data) return null;
